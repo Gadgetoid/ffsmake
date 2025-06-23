@@ -29,10 +29,6 @@ FATFS fs;
 FIL fil;
 FRESULT fr;
 
-char copy_buffer[1024];
-char copy_path[8192]; // Ugh
-char output_file[8192]; // Also ugh
-
 const char *argp_program_version = "v0.0.2";
 const char *argp_program_bug_address = "<ffsmake@gadgetoid.com>";
 static char doc[] = "FatFS filesystem builder for MicroPython.";
@@ -195,8 +191,8 @@ int copy_item(const char *filepath, const struct stat *info, const int typeflag,
 {
     size_t read;  // Bytes read by system fread
     UINT written; // Bytes written by FatFS
-    char *targetpath = malloc(1024);
-    strcpy(targetpath, filepath + strlen(args.input_directory));
+    char targetpath[FF_MAX_LFN];
+    strncpy(targetpath, filepath + strlen(args.input_directory), sizeof(targetpath));
 
     DEBUG("-- copy_item(%s -> %s, %d)\n", filepath, targetpath, typeflag);
     if(typeflag == FTW_D) { // directory
@@ -230,6 +226,7 @@ int copy_item(const char *filepath, const struct stat *info, const int typeflag,
         }
 
         while(1) {
+            char copy_buffer[1024];
             written = 0;
             read = fread(copy_buffer, 1, sizeof(copy_buffer), f);
             if(read == 0) {
