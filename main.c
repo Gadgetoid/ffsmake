@@ -11,10 +11,6 @@
 #include "diskio.h"
 #include "ffconf-micropython.h"
 
-// Run ./ffsmake directory output-file.bin
-// For a 2MB file on a 4MB flash, load with: picotool load -o 0x10200000 filesystem.bin
-// for macOS users: brew install argp-standalone
-
 #define DEFAULT_SECTOR_SIZE 4096
 #define DEFAULT_SECTOR_COUNT 512
 #define MAX(a,b) ((a) > (b) ? (a) : (b))

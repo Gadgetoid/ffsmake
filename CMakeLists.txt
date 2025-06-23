@@ -4,14 +4,14 @@ project(ffsmake)
 
 add_executable(ffsmake
     main.c
-    src/ff.c
-    src/ffsystem.c
-    src/ffunicode.c
+    oofatfs/src/ff.c
+    oofatfs/src/ffsystem.c
+    oofatfs/src/ffunicode.c
 )
 
 target_include_directories(ffsmake PRIVATE
     .
-    src/
+    oofatfs/src/
 )
 
 if(APPLE)
