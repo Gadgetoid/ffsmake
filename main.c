@@ -184,6 +184,13 @@ DWORD get_fattime (void) {
     return 0;
 }
 
+int ends_with(const char *path, const char *suffix) {
+    size_t len = strlen(path);
+    size_t slen = strlen(suffix);
+
+    return len >= slen && !memcmp(path + len - slen, suffix, slen);
+}
+
 int copy_item(const char *filepath, const struct stat *info, const int typeflag, struct FTW *pathinfo)
 {
     size_t read;  // Bytes read by system fread
@@ -193,10 +200,17 @@ int copy_item(const char *filepath, const struct stat *info, const int typeflag,
 
     DEBUG("-- copy_item(%s -> %s, %d)\n", filepath, targetpath, typeflag);
     if(typeflag == FTW_D) { // directory
-        f_mkdir(&fs, targetpath);
-        if(args.verbose) printf("- mkdir %s\n", targetpath);
+        if(strlen(targetpath)) {
+            f_mkdir(&fs, targetpath);
+            if(args.verbose) printf("- mkdir %s\n", targetpath);
+        }
+        return 0;
     }
     if(typeflag == FTW_F) {
+        if(ends_with(targetpath, ".DS_Store")) {
+            if(args.verbose) printf("- skipping %s\n", targetpath);
+            return 0;
+        }
         if(args.verbose) printf("- copy %s\n", targetpath);
         struct stat st;
         stat(filepath, &st);
