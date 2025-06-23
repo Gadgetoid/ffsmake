@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.25)
 
 project(ffsmake)
 
@@ -25,8 +25,11 @@ if(APPLE)
     target_link_libraries(ffsmake PRIVATE argp.a)
 endif()
 
+# Enable SUSv1 for nftw support
 target_compile_definitions(ffsmake PRIVATE
     FFCONF_H="ffconf-micropython.h"
+    _XOPEN_SOURCE
+    _XOPEN_SOURCE_EXTENDED
 )
 
 target_compile_options(ffsmake PRIVATE
